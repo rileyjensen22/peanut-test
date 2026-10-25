@@ -8,7 +8,7 @@ const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undef
 ---
 <Layout path="contact/" title={`Contact & FAQ | ${b.name} (sample site)`} description="Call or send a request for gallon orders, and read answers to common questions about Cajun seasoning, green peanuts and payment. Sample site.">
     <!-- Ask -->
-    <section id="ask" class="bg-pine/5 border-y border-paper-deep">
+    <section id="ask" class="bg-paper-deep">
       <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-[1fr_1.3fr] gap-10 md:gap-16">
         <div class="reveal">
           <h1 class="font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Feeding a crowd?</h1>
@@ -18,10 +18,10 @@ const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undef
         <form class="reveal grid gap-4" method="POST" action={action}>
           {!action && <p class="text-sm rounded-lg bg-shell/30 px-4 py-3">Form preview only. It starts sending once a Formspree form ID is added to the site config.</p>}
           <div class="grid sm:grid-cols-2 gap-4">
-            <label class="grid gap-1.5 text-sm font-medium">Name<input required name="name" autocomplete="name" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
-            <label class="grid gap-1.5 text-sm font-medium">Phone<input required name="phone" type="tel" autocomplete="tel" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
+            <label class="grid gap-1.5 text-sm font-medium">Name<input required name="name" autocomplete="name" class="rounded-lg border-2 border-ink/30 bg-white focus:border-pine px-4 py-3 text-base" /></label>
+            <label class="grid gap-1.5 text-sm font-medium">Phone<input required name="phone" type="tel" autocomplete="tel" class="rounded-lg border-2 border-ink/30 bg-white focus:border-pine px-4 py-3 text-base" /></label>
           </div>
-          <label class="grid gap-1.5 text-sm font-medium">What do you need, and when?<textarea name="message" rows="4" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" placeholder="Two gallons of Cajun, Saturday around noon"></textarea></label>
+          <label class="grid gap-1.5 text-sm font-medium">What do you need, and when?<textarea name="message" rows="4" class="rounded-lg border-2 border-ink/30 bg-white focus:border-pine px-4 py-3 text-base" placeholder="Two gallons of Cajun, Saturday around noon"></textarea></label>
           <button type="submit" disabled={!action} class="justify-self-start rounded-full bg-clay text-paper px-6 py-3.5 font-semibold disabled:opacity-80 disabled:cursor-not-allowed">Send the order request</button>
         </form>
       </div>
@@ -34,7 +34,7 @@ const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undef
         <p class="reveal mt-4 text-ink/70">Everything you want to know before you pull off the road.</p>
         <dl class="mt-10 space-y-2" id="faq-list">
           {faqs.map((item, i) => (
-            <div class="reveal faq-item border border-ink/12 rounded-xl overflow-hidden">
+            <div class="reveal faq-item bg-paper-deep rounded-xl overflow-hidden">
               <dt>
                 <button
                   class="faq-btn w-full text-left px-6 py-4 flex items-center justify-between gap-4 font-semibold text-pine hover:bg-paper-deep/50 transition-colors"

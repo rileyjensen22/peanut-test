@@ -5,13 +5,14 @@
 @theme {
   --font-display: 'Fraunces Variable', Georgia, serif;
   --font-sans: 'Inter Variable', system-ui, sans-serif;
-  --color-paper: #f4ecdc;
-  --color-paper-deep: #eadcc0;
+  --color-paper: #f6f5f0;
+  --color-paper-deep: #e7e4d9;
   --color-pine: #1f3b2d;
   --color-pine-soft: #2e5240;
-  --color-clay: #a2421f;
-  --color-shell: #d9b27c;
-  --color-ink: #231d16;
+  --color-clay: #b3261e;
+  --color-clay-deep: #8f1d17;
+  --color-shell: #f0c75e;
+  --color-ink: #1b1a17;
 }
 html { scroll-behavior: smooth; scroll-padding-top: 1rem; }
 body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
@@ -22,6 +23,11 @@ body { background: var(--color-paper); color: var(--color-ink); font-family: var
 :focus-visible { outline: 3px solid var(--color-clay); outline-offset: 3px; }
 .hamburger-bar { display: block; width: 22px; height: 2px; background: var(--color-pine); border-radius: 2px; transition: opacity .2s; }
 .mobile-menu { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
-.mobile-menu.mobile-menu-open { max-height: 320px; }
+.mobile-menu.mobile-menu-open { max-height: 360px; padding-top: 1rem; }
 .faq-answer { animation: faq-in .2s ease; }
 @keyframes faq-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+.btn { transition: transform .15s ease, background-color .15s ease, color .15s ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(.98); }
+@media (prefers-reduced-motion: reduce) { .btn, .btn:hover, .btn:active { transform: none; transition: none; } }
