@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/inter';
+
+@theme {
+  --font-display: 'Fraunces Variable', Georgia, serif;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --color-paper: #f4ecdc;
+  --color-paper-deep: #eadcc0;
+  --color-pine: #1f3b2d;
+  --color-pine-soft: #2e5240;
+  --color-clay: #a2421f;
+  --color-shell: #d9b27c;
+  --color-ink: #231d16;
+}
+html { scroll-behavior: smooth; scroll-padding-top: 1rem; }
+body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+.leader { flex: 1; border-bottom: 2px dotted color-mix(in srgb, var(--color-shell) 70%, transparent); transform: translateY(-0.35em); margin: 0 .6rem; min-width: 1rem; }
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+:focus-visible { outline: 3px solid var(--color-clay); outline-offset: 3px; }

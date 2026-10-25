@@ -1,0 +1,221 @@
+---
+import '../styles/global.css';
+import { business as b } from '../config/business';
+import { buildSchema, serialize } from '../lib/schema';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const title = `${b.name} | Boiled peanuts in ${b.address.city}, Georgia (sample site)`;
+const fmt = (t: string | null) => {
+  if (!t) return '';
+  const [h, m] = t.split(':').map(Number);
+  return `${((h + 11) % 12) + 1}${m ? ':' + String(m).padStart(2, '0') : ''} ${h < 12 ? 'a.m.' : 'p.m.'}`;
+};
+const { latitude: lat, longitude: lon } = b.geo;
+const osm = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.03}%2C${lat - 0.018}%2C${lon + 0.03}%2C${lat + 0.018}&layer=mapnik&marker=${lat}%2C${lon}`;
+const osmLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=14/${lat}/${lon}`;
+const tel = `tel:${b.phoneE164.replace(/-/g, '')}`;
+const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undefined;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={b.description} />
+  {b.demoMode && <meta name="robots" content="noindex, nofollow" />}
+  <link rel="canonical" href={`${b.siteUrl}/`} />
+  <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+  <meta name="theme-color" content="#1f3b2d" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={b.description} />
+  <meta property="og:url" content={`${b.siteUrl}/`} />
+  <meta property="og:image" content={`${b.siteUrl}/og.svg`} />
+  <script type="application/ld+json" is:inline set:html={serialize(buildSchema())} />
+</head>
+<body class="pb-20 md:pb-0">
+  {b.demoMode && (
+    <p class="bg-ink text-paper text-center text-xs tracking-wide py-2 px-4">
+      Sample site, fictional business. The name, number, address and prices are made up for demonstration.
+    </p>
+  )}
+
+  <header class="mx-auto max-w-6xl px-5 md:px-8 py-5 flex items-center justify-between gap-4">
+    <a href={`${base}/`} class="font-display text-2xl font-semibold text-pine">{b.name}</a>
+    <nav aria-label="Main" class="hidden md:flex gap-8 text-sm font-medium">
+      <a class="hover:text-clay" href="#prices">Prices</a>
+      <a class="hover:text-clay" href="#how">How we boil</a>
+      <a class="hover:text-clay" href="#visit">Hours &amp; directions</a>
+    </nav>
+    <a href={tel} class="hidden md:inline-flex rounded-full bg-pine text-paper px-5 py-2.5 text-sm font-semibold hover:bg-pine-soft">Call {b.phoneDisplay}</a>
+  </header>
+
+  <main>
+    <!-- Sign -->
+    <section class="mx-auto max-w-6xl px-5 md:px-8 pt-6 pb-16 md:pt-12 md:pb-24 grid md:grid-cols-[1.15fr_1fr] gap-10 items-center">
+      <div>
+        <p class="text-clay font-semibold tracking-[0.18em] uppercase text-xs mb-5">Roadside stand &middot; {b.address.city}, Georgia</p>
+        <h1 class="font-display text-pine text-[clamp(2.75rem,8vw,5.5rem)] leading-[0.95] font-semibold tracking-tight">
+          Hot peanuts,<br /><em class="font-normal text-clay">right off the road.</em>
+        </h1>
+        <p class="mt-6 max-w-md text-lg leading-relaxed text-ink/80">
+          Green peanuts simmered for hours in salted water until they turn soft and briny. Regular or Cajun, by the quart or the gallon, handed to you warm in a paper sack.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#prices" class="rounded-full bg-clay text-paper px-6 py-3.5 font-semibold hover:bg-[#8a3818]">See today&rsquo;s prices</a>
+          <a href="#visit" class="rounded-full border-2 border-pine text-pine px-6 py-3 font-semibold hover:bg-pine hover:text-paper">Get directions</a>
+        </div>
+      </div>
+      <figure class="relative" aria-hidden="true">
+        <svg viewBox="0 0 420 360" class="w-full max-w-md mx-auto" role="img">
+          <g fill="none" stroke="#a2421f" stroke-width="5" stroke-linecap="round" opacity=".55">
+            <path d="M150 70c-14-18 14-30 0-50"><animate attributeName="opacity" values=".2;1;.2" dur="3s" repeatCount="indefinite"/></path>
+            <path d="M205 62c-14-18 14-30 0-50"><animate attributeName="opacity" values="1;.2;1" dur="3.4s" repeatCount="indefinite"/></path>
+            <path d="M260 70c-14-18 14-30 0-50"><animate attributeName="opacity" values=".4;1;.4" dur="2.8s" repeatCount="indefinite"/></path>
+          </g>
+          <ellipse cx="205" cy="110" rx="150" ry="22" fill="#2e5240"/>
+          <path d="M60 110h290l-22 170c-3 22-20 36-42 36H124c-22 0-39-14-42-36z" fill="#1f3b2d"/>
+          <ellipse cx="205" cy="110" rx="132" ry="15" fill="#d9b27c"/>
+          <g fill="#c79a5d" stroke="#8c6a3c" stroke-width="2">
+            <path d="M120 106c6-10 26-8 30 0 3 6-2 9 6 10-10 6-30 6-36-10z"/>
+            <path d="M175 100c8-8 26-4 28 4 2 6-4 8 4 10-10 6-30 2-32-14z"/>
+            <path d="M232 104c6-10 26-8 30 0 3 6-2 9 6 10-10 6-30 6-36-10z"/>
+          </g>
+          <rect x="40" y="132" width="40" height="10" rx="5" fill="#1f3b2d"/>
+          <rect x="330" y="132" width="40" height="10" rx="5" fill="#1f3b2d"/>
+          <g transform="translate(118 190) rotate(-4)">
+            <rect width="176" height="70" rx="6" fill="#f4ecdc"/>
+            <text x="88" y="32" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700" fill="#a2421f">BOILED</text>
+            <text x="88" y="58" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700" fill="#1f3b2d">PEANUTS</text>
+          </g>
+          <path d="M20 340h380" stroke="#d9b27c" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </figure>
+    </section>
+
+    <!-- Price board -->
+    <section id="prices" class="bg-pine text-paper">
+      <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-[1fr_1.6fr] gap-10 md:gap-16">
+        <div class="reveal">
+          <h2 class="font-display text-4xl md:text-5xl font-semibold leading-tight">The price board</h2>
+          <p class="mt-4 text-paper/80 leading-relaxed max-w-sm">Regular is salt and water, nothing else. Cajun gets red pepper, garlic and a slow burn that sneaks up on you.</p>
+          <p class="mt-6 text-sm text-shell">{b.payment}</p>
+        </div>
+        <div class="reveal">
+          <div class="grid grid-cols-[1fr_auto_auto] gap-x-5 md:gap-x-10 text-xs uppercase tracking-[0.16em] text-shell pb-3 border-b border-paper/20">
+            <span>Size</span><span class="w-14 text-right">Regular</span><span class="w-14 text-right">Cajun</span>
+          </div>
+          <ul>
+            {b.prices.map((p) => (
+              <li class="grid grid-cols-[1fr_auto_auto] gap-x-5 md:gap-x-10 items-baseline py-5 border-b border-paper/20">
+                <span>
+                  <span class="font-display text-2xl md:text-3xl">{p.size}</span>
+                  <span class="block text-sm text-paper/65 mt-1">{p.note}</span>
+                </span>
+                <span class="w-14 text-right font-display text-2xl tabular-nums">${p.regular}</span>
+                <span class="w-14 text-right font-display text-2xl tabular-nums text-shell">${p.cajun}</span>
+              </li>
+            ))}
+          </ul>
+          <ul class="mt-8 space-y-4">
+            {b.extras.map((e) => (
+              <li>
+                <div class="flex items-baseline"><span class="font-semibold">{e.name}</span><span class="leader"></span><span class="font-display text-xl tabular-nums">${e.price}</span></div>
+                <p class="text-sm text-paper/65">{e.note}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- How -->
+    <section id="how" class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <h2 class="reveal font-display text-4xl md:text-5xl font-semibold text-pine max-w-xl leading-tight">Slow, salty, and done the old way</h2>
+      <ol class="mt-10 md:mt-14 grid md:grid-cols-[1.3fr_1fr_1fr] gap-x-12 gap-y-10">
+        <li class="reveal md:border-r md:border-paper-deep md:pr-12">
+          <span class="font-display text-6xl text-clay/80">01</span>
+          <h3 class="mt-2 font-semibold text-lg">Green peanuts, not dried</h3>
+          <p class="mt-2 text-ink/75 leading-relaxed">Fresh-dug green peanuts from late summer into fall, so the shells drink in the brine. Off-season, we use raw dried peanuts soaked overnight.</p>
+        </li>
+        <li class="reveal">
+          <h3 class="font-semibold text-lg"><span class="text-clay">02</span> &nbsp;Hours in the kettle</h3>
+          <p class="mt-2 text-ink/75 leading-relaxed">Four hours or more at a low rolling boil, tasted as we go until the kernel is tender all the way through.</p>
+        </li>
+        <li class="reveal">
+          <h3 class="font-semibold text-lg"><span class="text-clay">03</span> &nbsp;Soaked before serving</h3>
+          <p class="mt-2 text-ink/75 leading-relaxed">They rest in the warm brine so every peanut is seasoned inside the shell, not just on it.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Visit -->
+    <section id="visit" class="bg-paper-deep/60 border-y border-paper-deep">
+      <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-2 gap-10 md:gap-14">
+        <div class="reveal">
+          <h2 class="font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Hours &amp; directions</h2>
+          <p class="mt-4 text-ink/80 leading-relaxed">Look for the green tent and the steam on {b.address.street.replace(' (fictional)', '')}, just outside {b.address.city}. Plenty of room to pull off the shoulder.</p>
+          <table class="mt-8 w-full max-w-sm text-left">
+            <caption class="sr-only">Opening hours</caption>
+            <tbody>
+              {b.hours.map((h) => (
+                <tr class="border-b border-ink/10">
+                  <th scope="row" class="py-2.5 font-medium">{h.label}</th>
+                  <td class={`py-2.5 text-right tabular-nums ${h.open ? '' : 'text-ink/50'}`}>{h.open ? `${fmt(h.open)} – ${fmt(h.close)}` : 'Closed'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="mt-4 text-sm text-ink/60">When the pot is empty, we close early. Call ahead for a gallon.</p>
+          <address class="not-italic mt-8 space-y-1">
+            <p class="font-semibold">{b.address.street}</p>
+            <p>{b.address.city}, {b.address.region} {b.address.postalCode}</p>
+            <p><a class="text-clay font-semibold underline underline-offset-4" href={tel}>{b.phoneDisplay}</a> &middot; <a class="underline underline-offset-4" href={`mailto:${b.email}`}>{b.email}</a></p>
+          </address>
+        </div>
+        <div class="reveal">
+          <div class="overflow-hidden rounded-xl border border-ink/15 bg-paper aspect-[4/3] relative"><p class="absolute inset-0 grid place-items-center text-sm text-ink/50">Map of County Road 9 (sample)</p>
+            <iframe title="Map of the fictional stand location in rural south Georgia" src={osm} class="relative w-full h-full border-0"></iframe>
+          </div>
+          <p class="mt-3 text-sm text-ink/60">Map pin marks a generic rural spot for this sample. <a class="underline underline-offset-4" href={osmLink}>Open in OpenStreetMap</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ask -->
+    <section id="ask" class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-[1fr_1.3fr] gap-10 md:gap-16">
+      <div class="reveal">
+        <h2 class="font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Feeding a crowd?</h2>
+        <p class="mt-4 text-ink/80 leading-relaxed max-w-sm">Gallon tubs for tailgates, church suppers and family reunions. Give us a day&rsquo;s notice and we&rsquo;ll have them hot and waiting.</p>
+        <a href={tel} class="mt-6 inline-flex rounded-full bg-pine text-paper px-6 py-3.5 font-semibold hover:bg-pine-soft">Call {b.phoneDisplay}</a>
+      </div>
+      <form class="reveal grid gap-4" method="POST" action={action}>
+        {!action && <p class="text-sm rounded-lg bg-shell/30 px-4 py-3">Form preview only. It starts sending once a Formspree form ID is added to the site config.</p>}
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label class="grid gap-1.5 text-sm font-medium">Name<input required name="name" autocomplete="name" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
+          <label class="grid gap-1.5 text-sm font-medium">Phone<input required name="phone" type="tel" autocomplete="tel" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
+        </div>
+        <label class="grid gap-1.5 text-sm font-medium">What do you need, and when?<textarea name="message" rows="4" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" placeholder="Two gallons of Cajun, Saturday around noon"></textarea></label>
+        <button type="submit" disabled={!action} class="justify-self-start rounded-full bg-clay text-paper px-6 py-3.5 font-semibold disabled:opacity-80 disabled:cursor-not-allowed">Send the order request</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="bg-ink text-paper/75 text-sm">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 py-10 flex flex-col md:flex-row gap-4 justify-between">
+      <p><span class="font-display text-lg text-paper">{b.name}</span> &middot; {b.address.city}, Georgia</p>
+      <p>Sample site, fictional business. Illustrations are original SVG; map data &copy; <a class="underline" href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>.</p>
+    </div>
+  </footer>
+
+  <a data-call-bar href={tel} class="md:hidden fixed bottom-0 inset-x-0 z-20 bg-clay text-paper text-center font-semibold py-4 shadow-[0_-4px_16px_rgba(0,0,0,.15)]">Call the stand &middot; {b.phoneDisplay}</a>
+
+  <script>
+    const els = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    els.forEach((el) => io.observe(el));
+  </script>
+</body>
+</html>
