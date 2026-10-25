@@ -1,0 +1,58 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { business as b } from '../../config/business';
+import { faqs } from '../../lib/content';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const tel = `tel:${b.phoneE164.replace(/-/g, '')}`;
+const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undefined;
+---
+<Layout path="contact/" title={`Contact & FAQ | ${b.name} (sample site)`} description="Call or send a request for gallon orders, and read answers to common questions about Cajun seasoning, green peanuts and payment. Sample site.">
+    <!-- Ask -->
+    <section id="ask" class="bg-pine/5 border-y border-paper-deep">
+      <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-[1fr_1.3fr] gap-10 md:gap-16">
+        <div class="reveal">
+          <h1 class="font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Feeding a crowd?</h1>
+          <p class="mt-4 text-ink/80 leading-relaxed max-w-sm">Gallon tubs for tailgates, church suppers and family reunions. Give us a day&rsquo;s notice and we&rsquo;ll have them hot and waiting.</p>
+          <a href={tel} class="mt-6 inline-flex rounded-full bg-pine text-paper px-6 py-3.5 font-semibold hover:bg-pine-soft">Call {b.phoneDisplay}</a>
+        </div>
+        <form class="reveal grid gap-4" method="POST" action={action}>
+          {!action && <p class="text-sm rounded-lg bg-shell/30 px-4 py-3">Form preview only. It starts sending once a Formspree form ID is added to the site config.</p>}
+          <div class="grid sm:grid-cols-2 gap-4">
+            <label class="grid gap-1.5 text-sm font-medium">Name<input required name="name" autocomplete="name" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
+            <label class="grid gap-1.5 text-sm font-medium">Phone<input required name="phone" type="tel" autocomplete="tel" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
+          </div>
+          <label class="grid gap-1.5 text-sm font-medium">What do you need, and when?<textarea name="message" rows="4" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" placeholder="Two gallons of Cajun, Saturday around noon"></textarea></label>
+          <button type="submit" disabled={!action} class="justify-self-start rounded-full bg-clay text-paper px-6 py-3.5 font-semibold disabled:opacity-80 disabled:cursor-not-allowed">Send the order request</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <div class="max-w-2xl mx-auto">
+        <h2 class="reveal font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Questions people ask</h2>
+        <p class="reveal mt-4 text-ink/70">Everything you want to know before you pull off the road.</p>
+        <dl class="mt-10 space-y-2" id="faq-list">
+          {faqs.map((item, i) => (
+            <div class="reveal faq-item border border-ink/12 rounded-xl overflow-hidden">
+              <dt>
+                <button
+                  class="faq-btn w-full text-left px-6 py-4 flex items-center justify-between gap-4 font-semibold text-pine hover:bg-paper-deep/50 transition-colors"
+                  aria-expanded="false"
+                  data-index={i}
+                >
+                  <span>{item.q}</span>
+                  <svg class="faq-chevron shrink-0 w-5 h-5 text-clay transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </dt>
+              <dd class="faq-answer hidden px-6 pb-5 text-ink/75 leading-relaxed">
+                {item.a}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+</Layout>
