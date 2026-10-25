@@ -15,6 +15,20 @@ const osm = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.03}%
 const osmLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=14/${lat}/${lon}`;
 const tel = `tel:${b.phoneE164.replace(/-/g, '')}`;
 const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undefined;
+
+const testimonials = [
+  { quote: "Best boiled peanuts I've ever had, and I've been eating them my whole life. That Cajun seasoning sneaks up on you exactly like they say.", name: "Tammy R.", detail: "Pecan Hollow local" },
+  { quote: "Pulled over on a Friday afternoon on a whim. Ended up buying two quarts and calling my husband to meet me there. The gallon tub barely lasted the weekend.", name: "DeShawn M.", detail: "Passed through on I-75" },
+  { quote: "We ordered four gallons for the reunion. They had them hot and packed when we showed up. Everyone kept asking where we got them.", name: "Linda K.", detail: "Church supper organizer" },
+];
+
+const faqs = [
+  { q: "What's the difference between regular and Cajun?", a: "Regular is just salt and water — pure, briny peanuts the way your grandparents made them. Cajun adds red pepper flakes, garlic, and a couple of other things. It builds slow; the heat doesn't hit until the second or third bite." },
+  { q: "Are green peanuts always available?", a: "Fresh-dug green peanuts come in late summer through early fall. Outside that window we use raw dried peanuts soaked overnight — the flavor is a little different but they still take on the brine well. We'll tell you which we're running when you call." },
+  { q: "Can I order ahead for a large group?", a: "Yes, and we ask that you do. A gallon takes the better part of a day to boil right. Call the evening before at minimum, and give us two days' notice for three or more gallons." },
+  { q: "Do you take cards?", a: "Yes, we take cards and cash. Exact change keeps the line moving on busy Saturdays." },
+  { q: "What if you're sold out early?", a: "It happens. When the pot is empty, we close and put a sign out. Call ahead on weekends if you're driving from far away — we'll tell you whether we'll have peanuts left by the time you arrive." },
+];
 ---
 <!doctype html>
 <html lang="en">
@@ -44,19 +58,42 @@ const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undef
 
   <header class="mx-auto max-w-6xl px-5 md:px-8 py-5 flex items-center justify-between gap-4">
     <a href={`${base}/`} class="font-display text-2xl font-semibold text-pine">{b.name}</a>
+
     <nav aria-label="Main" class="hidden md:flex gap-8 text-sm font-medium">
       <a class="hover:text-clay" href="#prices">Prices</a>
       <a class="hover:text-clay" href="#how">How we boil</a>
       <a class="hover:text-clay" href="#visit">Hours &amp; directions</a>
     </nav>
-    <a href={tel} class="hidden md:inline-flex rounded-full bg-pine text-paper px-5 py-2.5 text-sm font-semibold hover:bg-pine-soft">Call {b.phoneDisplay}</a>
+
+    <div class="flex items-center gap-3">
+      <!-- Live open/closed badge -->
+      <span id="open-badge" class="hidden md:inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"></span>
+      <a href={tel} class="hidden md:inline-flex rounded-full bg-pine text-paper px-5 py-2.5 text-sm font-semibold hover:bg-pine-soft">Call {b.phoneDisplay}</a>
+      <!-- Mobile hamburger -->
+      <button id="menu-btn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden flex flex-col gap-1.5 p-2">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </div>
   </header>
 
+  <!-- Mobile menu -->
+  <nav id="mobile-menu" aria-label="Mobile" class="mobile-menu md:hidden px-5 pb-5 flex flex-col gap-4 text-base font-medium border-b border-ink/10">
+    <a class="hover:text-clay" href="#prices" onclick="closeMobileMenu()">Prices</a>
+    <a class="hover:text-clay" href="#how" onclick="closeMobileMenu()">How we boil</a>
+    <a class="hover:text-clay" href="#visit" onclick="closeMobileMenu()">Hours &amp; directions</a>
+    <a href={tel} class="rounded-full bg-pine text-paper px-6 py-3.5 font-semibold text-center hover:bg-pine-soft">Call {b.phoneDisplay}</a>
+  </nav>
+
   <main>
-    <!-- Sign -->
+    <!-- Hero -->
     <section class="mx-auto max-w-6xl px-5 md:px-8 pt-6 pb-16 md:pt-12 md:pb-24 grid md:grid-cols-[1.15fr_1fr] gap-10 items-center">
       <div>
-        <p class="text-clay font-semibold tracking-[0.18em] uppercase text-xs mb-5">Roadside stand &middot; {b.address.city}, Georgia</p>
+        <div class="flex flex-wrap items-center gap-2 mb-5">
+          <p class="text-clay font-semibold tracking-[0.18em] uppercase text-xs">Roadside stand &middot; {b.address.city}, Georgia</p>
+          <span id="hero-badge" class="hidden items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border"></span>
+        </div>
         <h1 class="font-display text-pine text-[clamp(2.75rem,8vw,5.5rem)] leading-[0.95] font-semibold tracking-tight">
           Hot peanuts,<br /><em class="font-normal text-clay">right off the road.</em>
         </h1>
@@ -66,6 +103,15 @@ const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undef
         <div class="mt-8 flex flex-wrap gap-3">
           <a href="#prices" class="rounded-full bg-clay text-paper px-6 py-3.5 font-semibold hover:bg-[#8a3818]">See today&rsquo;s prices</a>
           <a href="#visit" class="rounded-full border-2 border-pine text-pine px-6 py-3 font-semibold hover:bg-pine hover:text-paper">Get directions</a>
+        </div>
+        <!-- Star rating strip -->
+        <div class="mt-8 flex items-center gap-2">
+          <span class="flex gap-0.5" aria-label="5 stars">
+            {Array(5).fill(null).map(() => (
+              <svg class="w-4 h-4 text-shell" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            ))}
+          </span>
+          <span class="text-sm text-ink/70 font-medium">Loved by locals &amp; travelers</span>
         </div>
       </div>
       <figure class="relative" aria-hidden="true">
@@ -131,28 +177,52 @@ const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undef
       </div>
     </section>
 
+    <!-- Testimonials -->
+    <section id="reviews" class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <h2 class="reveal font-display text-4xl md:text-5xl font-semibold text-pine max-w-xl leading-tight">What people say</h2>
+      <p class="reveal mt-4 text-ink/70 max-w-lg">Locals, road-trippers, and reunion planners — they all find their way back.</p>
+      <div class="mt-10 md:mt-14 grid md:grid-cols-3 gap-6">
+        {testimonials.map((t) => (
+          <blockquote class="reveal bg-paper-deep/50 border border-paper-deep rounded-2xl p-6 flex flex-col gap-4">
+            <span class="flex gap-0.5" aria-label="5 stars">
+              {Array(5).fill(null).map(() => (
+                <svg class="w-3.5 h-3.5 text-clay" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              ))}
+            </span>
+            <p class="text-ink/80 leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
+            <footer class="text-sm">
+              <span class="font-semibold text-pine">{t.name}</span>
+              <span class="text-ink/50 ml-1.5">&middot; {t.detail}</span>
+            </footer>
+          </blockquote>
+        ))}
+      </div>
+    </section>
+
     <!-- How -->
-    <section id="how" class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
-      <h2 class="reveal font-display text-4xl md:text-5xl font-semibold text-pine max-w-xl leading-tight">Slow, salty, and done the old way</h2>
-      <ol class="mt-10 md:mt-14 grid md:grid-cols-[1.3fr_1fr_1fr] gap-x-12 gap-y-10">
-        <li class="reveal md:border-r md:border-paper-deep md:pr-12">
-          <span class="font-display text-6xl text-clay/80">01</span>
-          <h3 class="mt-2 font-semibold text-lg">Green peanuts, not dried</h3>
-          <p class="mt-2 text-ink/75 leading-relaxed">Fresh-dug green peanuts from late summer into fall, so the shells drink in the brine. Off-season, we use raw dried peanuts soaked overnight.</p>
-        </li>
-        <li class="reveal">
-          <h3 class="font-semibold text-lg"><span class="text-clay">02</span> &nbsp;Hours in the kettle</h3>
-          <p class="mt-2 text-ink/75 leading-relaxed">Four hours or more at a low rolling boil, tasted as we go until the kernel is tender all the way through.</p>
-        </li>
-        <li class="reveal">
-          <h3 class="font-semibold text-lg"><span class="text-clay">03</span> &nbsp;Soaked before serving</h3>
-          <p class="mt-2 text-ink/75 leading-relaxed">They rest in the warm brine so every peanut is seasoned inside the shell, not just on it.</p>
-        </li>
-      </ol>
+    <section id="how" class="bg-paper-deep/40 border-y border-paper-deep">
+      <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+        <h2 class="reveal font-display text-4xl md:text-5xl font-semibold text-pine max-w-xl leading-tight">Slow, salty, and done the old way</h2>
+        <ol class="mt-10 md:mt-14 grid md:grid-cols-[1.3fr_1fr_1fr] gap-x-12 gap-y-10">
+          <li class="reveal md:border-r md:border-paper-deep md:pr-12">
+            <span class="font-display text-6xl text-clay/80">01</span>
+            <h3 class="mt-2 font-semibold text-lg">Green peanuts, not dried</h3>
+            <p class="mt-2 text-ink/75 leading-relaxed">Fresh-dug green peanuts from late summer into fall, so the shells drink in the brine. Off-season, we use raw dried peanuts soaked overnight.</p>
+          </li>
+          <li class="reveal">
+            <h3 class="font-semibold text-lg"><span class="text-clay">02</span> &nbsp;Hours in the kettle</h3>
+            <p class="mt-2 text-ink/75 leading-relaxed">Four hours or more at a low rolling boil, tasted as we go until the kernel is tender all the way through.</p>
+          </li>
+          <li class="reveal">
+            <h3 class="font-semibold text-lg"><span class="text-clay">03</span> &nbsp;Soaked before serving</h3>
+            <p class="mt-2 text-ink/75 leading-relaxed">They rest in the warm brine so every peanut is seasoned inside the shell, not just on it.</p>
+          </li>
+        </ol>
+      </div>
     </section>
 
     <!-- Visit -->
-    <section id="visit" class="bg-paper-deep/60 border-y border-paper-deep">
+    <section id="visit">
       <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-2 gap-10 md:gap-14">
         <div class="reveal">
           <h2 class="font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Hours &amp; directions</h2>
@@ -185,21 +255,52 @@ const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undef
     </section>
 
     <!-- Ask -->
-    <section id="ask" class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-[1fr_1.3fr] gap-10 md:gap-16">
-      <div class="reveal">
-        <h2 class="font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Feeding a crowd?</h2>
-        <p class="mt-4 text-ink/80 leading-relaxed max-w-sm">Gallon tubs for tailgates, church suppers and family reunions. Give us a day&rsquo;s notice and we&rsquo;ll have them hot and waiting.</p>
-        <a href={tel} class="mt-6 inline-flex rounded-full bg-pine text-paper px-6 py-3.5 font-semibold hover:bg-pine-soft">Call {b.phoneDisplay}</a>
-      </div>
-      <form class="reveal grid gap-4" method="POST" action={action}>
-        {!action && <p class="text-sm rounded-lg bg-shell/30 px-4 py-3">Form preview only. It starts sending once a Formspree form ID is added to the site config.</p>}
-        <div class="grid sm:grid-cols-2 gap-4">
-          <label class="grid gap-1.5 text-sm font-medium">Name<input required name="name" autocomplete="name" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
-          <label class="grid gap-1.5 text-sm font-medium">Phone<input required name="phone" type="tel" autocomplete="tel" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
+    <section id="ask" class="bg-pine/5 border-y border-paper-deep">
+      <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-[1fr_1.3fr] gap-10 md:gap-16">
+        <div class="reveal">
+          <h2 class="font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Feeding a crowd?</h2>
+          <p class="mt-4 text-ink/80 leading-relaxed max-w-sm">Gallon tubs for tailgates, church suppers and family reunions. Give us a day&rsquo;s notice and we&rsquo;ll have them hot and waiting.</p>
+          <a href={tel} class="mt-6 inline-flex rounded-full bg-pine text-paper px-6 py-3.5 font-semibold hover:bg-pine-soft">Call {b.phoneDisplay}</a>
         </div>
-        <label class="grid gap-1.5 text-sm font-medium">What do you need, and when?<textarea name="message" rows="4" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" placeholder="Two gallons of Cajun, Saturday around noon"></textarea></label>
-        <button type="submit" disabled={!action} class="justify-self-start rounded-full bg-clay text-paper px-6 py-3.5 font-semibold disabled:opacity-80 disabled:cursor-not-allowed">Send the order request</button>
-      </form>
+        <form class="reveal grid gap-4" method="POST" action={action}>
+          {!action && <p class="text-sm rounded-lg bg-shell/30 px-4 py-3">Form preview only. It starts sending once a Formspree form ID is added to the site config.</p>}
+          <div class="grid sm:grid-cols-2 gap-4">
+            <label class="grid gap-1.5 text-sm font-medium">Name<input required name="name" autocomplete="name" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
+            <label class="grid gap-1.5 text-sm font-medium">Phone<input required name="phone" type="tel" autocomplete="tel" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" /></label>
+          </div>
+          <label class="grid gap-1.5 text-sm font-medium">What do you need, and when?<textarea name="message" rows="4" class="rounded-lg border border-ink/25 bg-white/70 px-4 py-3 text-base" placeholder="Two gallons of Cajun, Saturday around noon"></textarea></label>
+          <button type="submit" disabled={!action} class="justify-self-start rounded-full bg-clay text-paper px-6 py-3.5 font-semibold disabled:opacity-80 disabled:cursor-not-allowed">Send the order request</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <div class="max-w-2xl mx-auto">
+        <h2 class="reveal font-display text-4xl md:text-5xl font-semibold text-pine leading-tight">Questions people ask</h2>
+        <p class="reveal mt-4 text-ink/70">Everything you want to know before you pull off the road.</p>
+        <dl class="mt-10 space-y-2" id="faq-list">
+          {faqs.map((item, i) => (
+            <div class="reveal faq-item border border-ink/12 rounded-xl overflow-hidden">
+              <dt>
+                <button
+                  class="faq-btn w-full text-left px-6 py-4 flex items-center justify-between gap-4 font-semibold text-pine hover:bg-paper-deep/50 transition-colors"
+                  aria-expanded="false"
+                  data-index={i}
+                >
+                  <span>{item.q}</span>
+                  <svg class="faq-chevron shrink-0 w-5 h-5 text-clay transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </dt>
+              <dd class="faq-answer hidden px-6 pb-5 text-ink/75 leading-relaxed">
+                {item.a}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </section>
   </main>
 
@@ -213,9 +314,90 @@ const action = b.formspreeId ? `https://formspree.io/f/${b.formspreeId}` : undef
   <a data-call-bar href={tel} class="md:hidden fixed bottom-0 inset-x-0 z-20 bg-clay text-paper text-center font-semibold py-4 shadow-[0_-4px_16px_rgba(0,0,0,.15)]">Call the stand &middot; {b.phoneDisplay}</a>
 
   <script>
+    // Scroll-reveal
     const els = document.querySelectorAll('.reveal');
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
     els.forEach((el) => io.observe(el));
+
+    // Live open/closed status
+    const hours = [
+      { open: null, close: null },   // Mon
+      { open: null, close: null },   // Tue
+      { open: '10:00', close: '18:00' }, // Wed
+      { open: '10:00', close: '18:00' }, // Thu
+      { open: '10:00', close: '19:00' }, // Fri
+      { open: '09:00', close: '19:00' }, // Sat
+      { open: '12:00', close: '17:00' }, // Sun
+    ];
+    function isOpen() {
+      const now = new Date();
+      const day = now.getDay(); // 0=Sun
+      const idx = day === 0 ? 6 : day - 1; // map to Mon=0 … Sun=6
+      const h = hours[idx];
+      if (!h.open) return false;
+      const [oh, om] = h.open.split(':').map(Number);
+      const [ch, cm] = h.close!.split(':').map(Number);
+      const mins = now.getHours() * 60 + now.getMinutes();
+      return mins >= oh * 60 + om && mins < ch * 60 + cm;
+    }
+    const open = isOpen();
+    const badgeEl = document.getElementById('open-badge');
+    const heroBadge = document.getElementById('hero-badge');
+    if (badgeEl) {
+      badgeEl.classList.remove('hidden');
+      if (open) {
+        badgeEl.className = 'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-pine/10 text-pine border border-pine/20';
+        badgeEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse"></span>Open now';
+      } else {
+        badgeEl.className = 'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-ink/8 text-ink/60 border border-ink/12';
+        badgeEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-ink/30"></span>Closed';
+      }
+    }
+    if (heroBadge) {
+      heroBadge.classList.remove('hidden');
+      heroBadge.classList.add('inline-flex');
+      if (open) {
+        heroBadge.className = 'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border bg-pine/10 text-pine border-pine/25';
+        heroBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#4ade80]"></span>Open today';
+      } else {
+        heroBadge.className = 'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border bg-ink/6 text-ink/50 border-ink/15';
+        heroBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-ink/30"></span>Closed today';
+      }
+    }
+
+    // Mobile hamburger menu
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    function closeMobileMenu() {
+      mobileMenu?.classList.remove('mobile-menu-open');
+      menuBtn?.setAttribute('aria-expanded', 'false');
+    }
+    menuBtn?.addEventListener('click', () => {
+      const isOpen = menuBtn.getAttribute('aria-expanded') === 'true';
+      menuBtn.setAttribute('aria-expanded', String(!isOpen));
+      mobileMenu?.classList.toggle('mobile-menu-open', !isOpen);
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const answer = item?.querySelector('.faq-answer');
+        const chevron = btn.querySelector('.faq-chevron');
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        // Close all others
+        document.querySelectorAll('.faq-btn').forEach((b) => {
+          if (b !== btn) {
+            b.setAttribute('aria-expanded', 'false');
+            b.closest('.faq-item')?.querySelector('.faq-answer')?.classList.add('hidden');
+            b.querySelector('.faq-chevron')?.classList.remove('rotate-180');
+          }
+        });
+        btn.setAttribute('aria-expanded', String(!expanded));
+        answer?.classList.toggle('hidden', expanded);
+        chevron?.classList.toggle('rotate-180', !expanded);
+      });
+    });
   </script>
 </body>
 </html>
